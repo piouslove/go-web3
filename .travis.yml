@@ -1,0 +1,6 @@
+language: go
+go:
+  - 1.8.x
+go_import_path: github.com/regcostajr/go-web3
+sudo: false
+script: go test test/* -v
