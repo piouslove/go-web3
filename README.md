@@ -9,7 +9,7 @@ which implements the
 
 ## Status
 
-This package is currently under active development. It is already stable and the infrastructure is complete. However, there are still several RPCs left to implement and the API is not stable yet.
+This package is currently under active development. It is not already stable and the infrastructure is not complete and there are still several RPCs left to implement and the API is not stable yet.
 
 ## Installation
 
