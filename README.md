@@ -1,8 +1,8 @@
-# Ethereum Go API
+# Ethereum Go Client
 
 You need to run a local Ethereum node to use this library.
 
-This is a Ethereum compatible Go API
+This is a Ethereum compatible Go Client
 which implements the 
 [Generic JSON RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) spec and 
 [Personal JSON RPC](https://github.com/paritytech/parity/wiki/JSONRPC-personal-module) spec.
