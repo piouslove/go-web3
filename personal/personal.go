@@ -3,7 +3,7 @@ package personal
 import (
 	"fmt"
 
-	"github.com/regcostajr/go-web3/eth/dto"
+	"github.com/regcostajr/go-web3/dto"
 	"github.com/regcostajr/go-web3/providers"
 )
 

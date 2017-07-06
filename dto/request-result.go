@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+
+	"encoding/json"
 )
 
 type RequestResult struct {
@@ -76,5 +78,31 @@ func (pointer *RequestResult) ToBoolean() (bool, error) {
 	}
 
 	return result.(bool), nil
+
+}
+
+func (pointer *RequestResult) ToTransactionResponse() (*TransactionResponse, error) {
+
+	result := (pointer).Result.(map[string]interface{})
+
+	if pointer.Error != nil {
+		return nil, errors.New(pointer.Error.Message)
+	}
+
+	if len(result) == 0 {
+		return nil, errors.New("Record not found")
+	}
+
+	transactionResponse := &TransactionResponse{}
+
+	marshal, err := json.Marshal(result)
+
+	if err != nil {
+		return nil, errors.New("Nil response")
+	}
+
+	json.Unmarshal([]byte(marshal), transactionResponse)
+
+	return transactionResponse, nil
 
 }
