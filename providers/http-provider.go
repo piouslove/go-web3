@@ -33,7 +33,7 @@ func (provider HTTPProvider) SendRequest(v interface{}, method string, params in
 	if err != nil {
 		return err
 	}
-	/*req.Header.Set("Content-Type", "application/x-www-form-urlencoded")*/
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
 

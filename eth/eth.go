@@ -26,10 +26,9 @@ func (eth *Eth) EstimateGas(from string, to string, value int64, hexData string)
 	params[0].Value = fmt.Sprintf("0x%x", value)
 	params[0].Data = hexData
 
-	transaction := dto.RequestResult{}
-	pointer := &transaction
+	pointer := &dto.RequestResult{}
 
-	err := eth.provider.SendRequest(&transaction, "eth_estimateGas", params)
+	err := eth.provider.SendRequest(&pointer, "eth_estimateGas", params)
 
 	if err != nil {
 		return 0, err
@@ -46,8 +45,7 @@ func (eth *Eth) GetBalance(address string, blockNumber string) (uint64, error) {
 	params[0] = address
 	params[1] = blockNumber
 
-	balance := dto.RequestResult{}
-	pointer := &balance
+	pointer := &dto.RequestResult{}
 
 	err := eth.provider.SendRequest(pointer, "eth_getBalance", params)
 
@@ -78,8 +76,7 @@ func (eth *Eth) GetTransactionByHash(hash string) (*dto.TransactionResponse, err
 
 func (eth *Eth) ListAccounts() ([]string, error) {
 
-	accounts := dto.RequestResult{}
-	pointer := &accounts
+	pointer := &dto.RequestResult{}
 
 	err := eth.provider.SendRequest(pointer, "eth_accounts", nil)
 
@@ -93,25 +90,16 @@ func (eth *Eth) ListAccounts() ([]string, error) {
 
 func (eth *Eth) SendTransaction(from string, to string, value int64, hexData string) (string, error) {
 
-	gasResult, err := eth.EstimateGas(from, to, value, hexData)
-
-	if err != nil {
-		return "", err
-	}
-
 	params := make([]dto.TransactionParameters, 1)
 
 	params[0].From = from
 	params[0].To = to
-	params[0].Gas = fmt.Sprintf("0x%x", gasResult)
-	params[0].GasPrice = "0x9184e72a000"
 	params[0].Value = fmt.Sprintf("0x%x", value)
 	params[0].Data = hexData
 
-	transaction := dto.RequestResult{}
-	pointer := &transaction
+	pointer := &dto.RequestResult{}
 
-	err = eth.provider.SendRequest(&transaction, "eth_sendTransaction", params)
+	err := eth.provider.SendRequest(&pointer, "eth_sendTransaction", params)
 
 	if err != nil {
 		return "", err

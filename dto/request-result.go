@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/regcostajr/go-web3/constants"
+
 	"encoding/json"
 )
 
@@ -90,7 +92,7 @@ func (pointer *RequestResult) ToTransactionResponse() (*TransactionResponse, err
 	}
 
 	if len(result) == 0 {
-		return nil, errors.New("Record not found")
+		return nil, errors.New(constants.NOTFOUND)
 	}
 
 	transactionResponse := &TransactionResponse{}
@@ -98,7 +100,7 @@ func (pointer *RequestResult) ToTransactionResponse() (*TransactionResponse, err
 	marshal, err := json.Marshal(result)
 
 	if err != nil {
-		return nil, errors.New("Nil response")
+		return nil, errors.New(constants.UNPARSEABLE)
 	}
 
 	json.Unmarshal([]byte(marshal), transactionResponse)

@@ -17,6 +17,55 @@ func NewPersonal(provider providers.ProviderInterface) *Personal {
 	return personal
 }
 
+func (personal *Personal) ListAccounts() ([]string, error) {
+
+	pointer := &dto.RequestResult{}
+
+	err := personal.provider.SendRequest(pointer, "personal_listAccounts", nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pointer.ToStringArray()
+
+}
+
+func (personal *Personal) NewAccount(password string) (string, error) {
+
+	pointer := &dto.RequestResult{}
+
+	err := personal.provider.SendRequest(&pointer, "personal_newAccount", nil)
+
+	if err != nil {
+		return "", err
+	}
+
+	return pointer.ToString()
+
+}
+
+func (personal *Personal) SendTransaction(from string, to string, value int64, hexData string) (string, error) {
+
+	params := make([]dto.TransactionParameters, 1)
+
+	params[0].From = from
+	params[0].To = to
+	params[0].Value = fmt.Sprintf("0x%x", value)
+	params[0].Data = hexData
+
+	pointer := &dto.RequestResult{}
+
+	err := personal.provider.SendRequest(pointer, "personal_sendTransaction", params)
+
+	if err != nil {
+		return "", err
+	}
+
+	return pointer.ToString()
+
+}
+
 // UnlockAccount ...
 func (personal *Personal) UnlockAccount(address string, password string, duration int) (bool, error) {
 
@@ -25,8 +74,7 @@ func (personal *Personal) UnlockAccount(address string, password string, duratio
 	params[1] = password
 	params[2] = fmt.Sprintf("0x%x", duration)
 
-	unlock := dto.RequestResult{}
-	pointer := &unlock
+	pointer := &dto.RequestResult{}
 
 	err := personal.provider.SendRequest(pointer, "personal_unlockAccount", params)
 
