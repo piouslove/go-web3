@@ -38,13 +38,13 @@ func NewNet(provider providers.ProviderInterface) *Net {
 	return net
 }
 
-// Listening - Returns true if client is actively listening for network connections.
+// IsListening - Returns true if client is actively listening for network connections.
 // Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#net_listening
 // Parameters:
 //    - none
 // Returns:
 // 	  - Boolean - true when listening, otherwise false.
-func (net *Net) Listening() (bool, error) {
+func (net *Net) IsListening() (bool, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -58,13 +58,13 @@ func (net *Net) Listening() (bool, error) {
 
 }
 
-// PeerCount - Returns number of peers currently connected to the client.
+// GetPeerCount - Returns number of peers currently connected to the client.
 // Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#net_peercount
 // Parameters:
 //    - none
 // Returns:
 // 	  - QUANTITY - integer of the number of connected peers.
-func (net *Net) PeerCount() (uint64, error) {
+func (net *Net) GetPeerCount() (int64, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -78,7 +78,7 @@ func (net *Net) PeerCount() (uint64, error) {
 
 }
 
-// Version - Returns the current network id.
+// GetVersion - Returns the current network id.
 // Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#net_version
 // Parameters:
 //    - none
@@ -89,7 +89,7 @@ func (net *Net) PeerCount() (uint64, error) {
 //    "3": Ropsten Testnet
 //    "4": Rinkeby Testnet
 //    "42": Kovan Testnet
-func (net *Net) Version() (string, error) {
+func (net *Net) GetVersion() (string, error) {
 
 	pointer := &dto.RequestResult{}
 

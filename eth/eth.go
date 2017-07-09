@@ -22,8 +22,7 @@
 package eth
 
 import (
-	"fmt"
-
+	"github.com/regcostajr/go-web3/complex/types"
 	"github.com/regcostajr/go-web3/dto"
 	"github.com/regcostajr/go-web3/providers"
 )
@@ -40,6 +39,49 @@ func NewEth(provider providers.ProviderInterface) *Eth {
 	return eth
 }
 
+// GetProtocolVersion - Returns the current ethereum protocol version.
+// Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_protocolversion
+// Parameters:
+//    - none
+// Returns:
+// 	  - String - The current ethereum protocol version
+func (eth *Eth) GetProtocolVersion() (string, error) {
+
+	pointer := &dto.RequestResult{}
+
+	err := eth.provider.SendRequest(pointer, "eth_protocolVersion", nil)
+
+	if err != nil {
+		return "", err
+	}
+
+	return pointer.ToString()
+
+}
+
+// IsSyncing - Returns an object with data about the sync status or false.
+// Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_syncing
+// Parameters:
+//    - none
+// Returns:
+// 	  - Object|Boolean, An object with sync status data or FALSE, when not syncing:
+//    	- startingBlock: 	QUANTITY - The block at which the import started (will only be reset, after the sync reached his head)
+//    	- currentBlock: 	QUANTITY - The current block, same as eth_blockNumber
+//    	- highestBlock: 	QUANTITY - The estimated highest block
+func (eth *Eth) IsSyncing() (*dto.SyncingResponse, error) {
+
+	pointer := &dto.RequestResult{}
+
+	err := eth.provider.SendRequest(pointer, "eth_syncing", nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pointer.ToSyncingResponse()
+
+}
+
 // EstimateGas - Makes a call or transaction, which won't be added to the blockchain and returns the used gas, which can be used for estimating the used gas.
 // Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_estimategas
 // Parameters:
@@ -47,14 +89,14 @@ func NewEth(provider providers.ProviderInterface) *Eth {
 // 		upper bound. As a result the returned estimate might not be enough to executed the call/transaction when the amount of gas is higher than the pending block gas limit.
 // Returns:
 //    - QUANTITY - the amount of gas used.
-func (eth *Eth) EstimateGas(from string, to string, value int64, hexData string) (uint64, error) {
+func (eth *Eth) EstimateGas(from types.Address, to types.Address, value types.ComplexIntParameter, hexData types.ComplexString) (int64, error) {
 
 	params := make([]dto.TransactionParameters, 1)
 
 	params[0].From = from
 	params[0].To = to
-	params[0].Value = fmt.Sprintf("0x%x", value)
-	params[0].Data = hexData
+	params[0].Value = value.ToHex()
+	params[0].Data = hexData.ToHex()
 
 	pointer := &dto.RequestResult{}
 
@@ -75,10 +117,10 @@ func (eth *Eth) EstimateGas(from string, to string, value int64, hexData string)
 //	  - QUANTITY|TAG - integer block number, or the string "latest", "earliest" or "pending", see the default block parameter: https://github.com/ethereum/wiki/wiki/JSON-RPC#the-default-block-parameter
 // Returns:
 // 	  - QUANTITY - integer of the current balance in wei.
-func (eth *Eth) GetBalance(address string, blockNumber string) (uint64, error) {
+func (eth *Eth) GetBalance(address types.Address, blockNumber string) (int64, error) {
 
 	params := make([]string, 2)
-	params[0] = address
+	params[0] = string(address)
 	params[1] = blockNumber
 
 	pointer := &dto.RequestResult{}
@@ -99,7 +141,7 @@ func (eth *Eth) GetBalance(address string, blockNumber string) (uint64, error) {
 //    - none
 // Returns:
 // 	  - QUANTITY - integer of the current block number the client is on.
-func (eth *Eth) GetBlockNumber() (uint64, error) {
+func (eth *Eth) GetBlockNumber() (int64, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -153,7 +195,7 @@ func (eth *Eth) GetTransactionByHash(hash string) (*dto.TransactionResponse, err
 //    - none
 // Returns:
 //    - Array of DATA, 20 Bytes - addresses owned by the client.
-func (eth *Eth) ListAccounts() ([]string, error) {
+func (eth *Eth) ListAccounts() ([]types.Address, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -163,7 +205,7 @@ func (eth *Eth) ListAccounts() ([]string, error) {
 		return nil, err
 	}
 
-	return pointer.ToStringArray()
+	return pointer.ToAddressArray()
 
 }
 
@@ -181,14 +223,14 @@ func (eth *Eth) ListAccounts() ([]string, error) {
 // Returns:
 //	  - DATA, 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
 // Use eth_getTransactionReceipt to get the contract address, after the transaction was mined, when you created a contract.
-func (eth *Eth) SendTransaction(from string, to string, value int64, hexData string) (string, error) {
+func (eth *Eth) SendTransaction(from types.Address, to types.Address, value types.ComplexIntParameter, hexData types.ComplexString) (types.Hash, error) {
 
 	params := make([]dto.TransactionParameters, 1)
 
 	params[0].From = from
 	params[0].To = to
-	params[0].Value = fmt.Sprintf("0x%x", value)
-	params[0].Data = hexData
+	params[0].Value = value.ToHex()
+	params[0].Data = hexData.ToHex()
 
 	pointer := &dto.RequestResult{}
 
@@ -198,6 +240,8 @@ func (eth *Eth) SendTransaction(from string, to string, value int64, hexData str
 		return "", err
 	}
 
-	return pointer.ToString()
+	response, err := pointer.ToString()
+
+	return types.Hash(response), err
 
 }

@@ -22,8 +22,7 @@
 package personal
 
 import (
-	"fmt"
-
+	"github.com/regcostajr/go-web3/complex/types"
 	"github.com/regcostajr/go-web3/dto"
 	"github.com/regcostajr/go-web3/providers"
 )
@@ -46,7 +45,7 @@ func NewPersonal(provider providers.ProviderInterface) *Personal {
 //    - none
 // Returns:
 //    - Array - A list of 20 byte account identifiers.
-func (personal *Personal) ListAccounts() ([]string, error) {
+func (personal *Personal) ListAccounts() ([]types.Address, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -56,7 +55,7 @@ func (personal *Personal) ListAccounts() ([]string, error) {
 		return nil, err
 	}
 
-	return pointer.ToStringArray()
+	return pointer.ToAddressArray()
 
 }
 
@@ -67,7 +66,7 @@ func (personal *Personal) ListAccounts() ([]string, error) {
 //    - String - Password for the new account.
 // Returns:
 //	  - Address - 20 Bytes - The identifier of the new account.
-func (personal *Personal) NewAccount(password string) (string, error) {
+func (personal *Personal) NewAccount(password string) (types.Address, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -77,7 +76,9 @@ func (personal *Personal) NewAccount(password string) (string, error) {
 		return "", err
 	}
 
-	return pointer.ToString()
+	response, err := pointer.ToString()
+
+	return types.Address(response), err
 
 }
 
@@ -96,15 +97,15 @@ func (personal *Personal) NewAccount(password string) (string, error) {
 //    2. String - Passphrase to unlock the from account.
 // Returns:
 //    - Data - 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available
-func (personal *Personal) SendTransaction(from string, to string, value int64, hexData string, password string) (string, error) {
+func (personal *Personal) SendTransaction(from types.Address, to types.Address, value types.ComplexIntParameter, hexData types.ComplexString, password string) (string, error) {
 
 	params := make([]interface{}, 1)
 
 	transactionParameters := &dto.TransactionParameters{}
 	transactionParameters.From = from
 	transactionParameters.To = to
-	transactionParameters.Value = fmt.Sprintf("0x%x", value)
-	transactionParameters.Data = hexData
+	transactionParameters.Value = value.ToHex()
+	transactionParameters.Data = hexData.ToHex()
 
 	params[0] = transactionParameters
 	params[1] = password
@@ -134,12 +135,12 @@ func (personal *Personal) SendTransaction(from string, to string, value int64, h
 //    - Quantity - (default: 300) Integer or null - Duration in seconds how long the account should remain unlocked for.
 // Returns:
 // 	   - Boolean - whether the call was successful
-func (personal *Personal) UnlockAccount(address string, password string, duration int) (bool, error) {
+func (personal *Personal) UnlockAccount(address types.Address, password string, duration types.ComplexIntParameter) (bool, error) {
 
 	params := make([]string, 3)
-	params[0] = address
+	params[0] = string(address)
 	params[1] = password
-	params[2] = fmt.Sprintf("0x%x", duration)
+	params[2] = duration.ToHex()
 
 	pointer := &dto.RequestResult{}
 

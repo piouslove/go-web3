@@ -13,32 +13,18 @@
 *********************************************************************************/
 
 /**
- * @file personal_test.go
+ * @file syncing.go
  * @authors:
  *   Reginaldo Costa <regcostajr@gmail.com>
  * @date 2017
  */
-package test
 
-import (
-	"testing"
+package dto
 
-	web3 "github.com/regcostajr/go-web3"
-	"github.com/regcostajr/go-web3/providers"
-)
+import "github.com/regcostajr/go-web3/complex/types"
 
-var personalClient = web3.NewWeb3(providers.NewHTTPProvider("http://127.0.0.1:8545", 100))
-
-func TestPersonalListAccounts(t *testing.T) {
-
-	list, err := personalClient.Personal.ListAccounts()
-
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	for index := 0; index < len(list); index++ {
-		t.Log(list[index])
-	}
+type SyncingResponse struct {
+	StartingBlock types.ComplexIntResponse `json:"startingBlock"`
+	CurrentBlock  types.ComplexIntResponse `json:"currentBlock"`
+	HighestBlock  types.ComplexIntResponse `json:"highestBlock"`
 }

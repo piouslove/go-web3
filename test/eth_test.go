@@ -24,6 +24,7 @@ import (
 	"testing"
 
 	web3 "github.com/regcostajr/go-web3"
+	"github.com/regcostajr/go-web3/complex/types"
 	"github.com/regcostajr/go-web3/eth/block"
 	"github.com/regcostajr/go-web3/providers"
 )
@@ -43,16 +44,45 @@ func TestGetBalance(t *testing.T) {
 
 }
 
+func TestSyncing(t *testing.T) {
+
+	syncing, err := ethClient.Eth.IsSyncing()
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	t.Log(syncing.CurrentBlock.ToInt64())
+
+}
+
+func TestEthListAccounts(t *testing.T) {
+
+	list, err := ethClient.Eth.ListAccounts()
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	for index := 0; index < len(list); index++ {
+		t.Log(list[index])
+	}
+}
+
 func TestSendTransaction(t *testing.T) {
 
-	unlocked, err := ethClient.Personal.UnlockAccount("0x00035DB1C858Fe4C2772a779C6fEF0FdB850dE42", "tcpip01", 10)
+	unlocked, err := ethClient.Personal.UnlockAccount("0x00035DB1C858Fe4C2772a779C6fEF0FdB850dE42", "pass", 10)
 
 	if !unlocked {
 		t.Error(err)
 		return
 	}
 
-	transaction, err := ethClient.Eth.SendTransaction("0x00035DB1C858Fe4C2772a779C6fEF0FdB850dE42", "0x007C0C7a7aB4aeDEE49bAb4c3a7dBfF9C675edCA", 1*web3.Coin, "0x7472616e73616374696f6e2073656e742062792074686520676f2d7765623320617069")
+	complex := types.ComplexIntParameter(1 * web3.Coin)
+
+	transaction, err := ethClient.Eth.SendTransaction("0x00035DB1C858Fe4C2772a779C6fEF0FdB850dE42", "0x007C0C7a7aB4aeDEE49bAb4c3a7dBfF9C675edCA", complex, "0x7472616e73616374696f6e2073656e742062792074686520676f2d7765623320617069")
 
 	if err != nil {
 		t.Error(err)
@@ -68,6 +98,6 @@ func TestSendTransaction(t *testing.T) {
 		return
 	}
 
-	t.Log(search.Gas)
+	t.Log(search.Gas.ToInt64())
 
 }

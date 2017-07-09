@@ -26,6 +26,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/regcostajr/go-web3/complex/types"
 	"github.com/regcostajr/go-web3/constants"
 
 	"encoding/json"
@@ -43,6 +44,23 @@ type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    string `json:"data"`
+}
+
+func (pointer *RequestResult) ToAddressArray() ([]types.Address, error) {
+
+	if pointer.Error != nil {
+		return nil, errors.New(pointer.Error.Message)
+	}
+
+	result := (pointer).Result.([]interface{})
+
+	new := make([]types.Address, len(result))
+	for i, v := range result {
+		new[i] = types.Address(v.(string))
+	}
+
+	return new, nil
+
 }
 
 func (pointer *RequestResult) ToStringArray() ([]string, error) {
@@ -74,7 +92,7 @@ func (pointer *RequestResult) ToString() (string, error) {
 
 }
 
-func (pointer *RequestResult) ToInt() (uint64, error) {
+func (pointer *RequestResult) ToInt() (int64, error) {
 
 	if pointer.Error != nil {
 		return 0, errors.New(pointer.Error.Message)
@@ -86,9 +104,9 @@ func (pointer *RequestResult) ToInt() (uint64, error) {
 
 	cleaned := strings.Replace(hex, "0x", "", -1)
 
-	numericResult, err := strconv.ParseUint(cleaned, 16, 64)
+	numericResult, err := strconv.ParseInt(cleaned, 16, 64)
 
-	return uint64(numericResult), err
+	return numericResult, err
 
 }
 
@@ -127,5 +145,40 @@ func (pointer *RequestResult) ToTransactionResponse() (*TransactionResponse, err
 	json.Unmarshal([]byte(marshal), transactionResponse)
 
 	return transactionResponse, nil
+
+}
+
+func (pointer *RequestResult) ToSyncingResponse() (*SyncingResponse, error) {
+
+	if pointer.Error != nil {
+		return nil, errors.New(pointer.Error.Message)
+	}
+
+	var result map[string]interface{}
+
+	switch (pointer).Result.(type) {
+	case bool:
+		return &SyncingResponse{}, nil
+	case map[string]interface{}:
+		result = (pointer).Result.(map[string]interface{})
+	default:
+		return nil, errors.New(constants.UNPARSEABLE)
+	}
+
+	if len(result) == 0 {
+		return nil, errors.New(constants.NOTFOUND)
+	}
+
+	syncingResponse := &SyncingResponse{}
+
+	marshal, err := json.Marshal(result)
+
+	if err != nil {
+		return nil, errors.New(constants.UNPARSEABLE)
+	}
+
+	json.Unmarshal([]byte(marshal), syncingResponse)
+
+	return syncingResponse, nil
 
 }
