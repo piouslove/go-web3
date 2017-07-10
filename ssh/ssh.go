@@ -71,7 +71,7 @@ func (ssh *SSH) GetVersion() (string, error) {
 //    	- ttl: QUANTITY - integer of the time to live in seconds.
 // Returns:
 // 	  - Boolean - returns true if the message was send, otherwise false.
-func (ssh *SSH) Post(from types.Address, to types.Address, topics []types.Address, payload string, priority types.ComplexIntParameter, ttl types.ComplexIntParameter) (bool, error) {
+func (ssh *SSH) Post(from string, to string, topics []string, payload string, priority types.ComplexIntParameter, ttl types.ComplexIntParameter) (bool, error) {
 
 	params := make([]dto.SSHPostParameters, 1)
 	params[0].From = from

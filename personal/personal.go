@@ -45,7 +45,7 @@ func NewPersonal(provider providers.ProviderInterface) *Personal {
 //    - none
 // Returns:
 //    - Array - A list of 20 byte account identifiers.
-func (personal *Personal) ListAccounts() ([]types.Address, error) {
+func (personal *Personal) ListAccounts() ([]string, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -55,7 +55,7 @@ func (personal *Personal) ListAccounts() ([]types.Address, error) {
 		return nil, err
 	}
 
-	return pointer.ToAddressArray()
+	return pointer.ToStringArray()
 
 }
 
@@ -66,7 +66,7 @@ func (personal *Personal) ListAccounts() ([]types.Address, error) {
 //    - String - Password for the new account.
 // Returns:
 //	  - Address - 20 Bytes - The identifier of the new account.
-func (personal *Personal) NewAccount(password string) (types.Address, error) {
+func (personal *Personal) NewAccount(password string) (string, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -78,7 +78,7 @@ func (personal *Personal) NewAccount(password string) (types.Address, error) {
 
 	response, err := pointer.ToString()
 
-	return types.Address(response), err
+	return response, err
 
 }
 
@@ -97,9 +97,9 @@ func (personal *Personal) NewAccount(password string) (types.Address, error) {
 //    2. String - Passphrase to unlock the from account.
 // Returns:
 //    - Data - 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available
-func (personal *Personal) SendTransaction(from types.Address, to types.Address, value types.ComplexIntParameter, hexData types.ComplexString, password string) (string, error) {
+func (personal *Personal) SendTransaction(from string, to string, value types.ComplexIntParameter, hexData types.ComplexString, password string) (string, error) {
 
-	params := make([]interface{}, 1)
+	params := make([]interface{}, 2)
 
 	transactionParameters := &dto.TransactionParameters{}
 	transactionParameters.From = from
@@ -135,7 +135,7 @@ func (personal *Personal) SendTransaction(from types.Address, to types.Address, 
 //    - Quantity - (default: 300) Integer or null - Duration in seconds how long the account should remain unlocked for.
 // Returns:
 // 	   - Boolean - whether the call was successful
-func (personal *Personal) UnlockAccount(address types.Address, password string, duration types.ComplexIntParameter) (bool, error) {
+func (personal *Personal) UnlockAccount(address string, password string, duration types.ComplexIntParameter) (bool, error) {
 
 	params := make([]string, 3)
 	params[0] = string(address)

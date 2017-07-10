@@ -26,7 +26,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/regcostajr/go-web3/complex/types"
 	"github.com/regcostajr/go-web3/constants"
 
 	"encoding/json"
@@ -44,23 +43,6 @@ type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    string `json:"data"`
-}
-
-func (pointer *RequestResult) ToAddressArray() ([]types.Address, error) {
-
-	if pointer.Error != nil {
-		return nil, errors.New(pointer.Error.Message)
-	}
-
-	result := (pointer).Result.([]interface{})
-
-	new := make([]types.Address, len(result))
-	for i, v := range result {
-		new[i] = types.Address(v.(string))
-	}
-
-	return new, nil
-
 }
 
 func (pointer *RequestResult) ToStringArray() ([]string, error) {

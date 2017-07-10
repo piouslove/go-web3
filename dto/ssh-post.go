@@ -21,13 +21,11 @@
 
 package dto
 
-import "github.com/regcostajr/go-web3/complex/types"
-
 type SSHPostParameters struct {
-	From     types.Address   `json:"from"`
-	To       types.Address   `json:"to"`
-	Topics   []types.Address `json:"topics"`
-	Payload  string          `json:"payload"`
-	Priority string          `json:"priority"`
-	TTL      string          `json:"ttl"`
+	From     string   `json:"from"`
+	To       string   `json:"to"`
+	Topics   []string `json:"topics"`
+	Payload  string   `json:"payload"`
+	Priority string   `json:"priority"`
+	TTL      string   `json:"ttl"`
 }

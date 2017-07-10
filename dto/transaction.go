@@ -24,22 +24,22 @@ package dto
 import "github.com/regcostajr/go-web3/complex/types"
 
 type TransactionParameters struct {
-	From     types.Address `json:"from"`
-	To       types.Address `json:"to"`
-	Gas      string        `json:"gas,omitempty"`
-	GasPrice string        `json:"gasPrice,omitempty"`
-	Value    string        `json:"value"`
-	Data     string        `json:"data,omitempty"`
+	From     string `json:"from"`
+	To       string `json:"to"`
+	Gas      string `json:"gas,omitempty"`
+	GasPrice string `json:"gasPrice,omitempty"`
+	Value    string `json:"value"`
+	Data     string `json:"data,omitempty"`
 }
 
 type TransactionResponse struct {
-	Hash             types.Hash               `json:"hash"`
+	Hash             string                   `json:"hash"`
 	Nonce            int                      `json:"nonce"`
-	BlockHash        types.Hash               `json:"blockHash"`
+	BlockHash        string                   `json:"blockHash"`
 	BlockNumber      int64                    `json:"blockNumber"`
 	TransactionIndex int64                    `json:"transactionIndex"`
-	From             types.Address            `json:"from"`
-	To               types.Address            `json:"to"`
+	From             string                   `json:"from"`
+	To               string                   `json:"to"`
 	Value            types.ComplexIntResponse `json:"value"`
 	GasPrice         types.ComplexIntResponse `json:"gasPrice,omitempty"`
 	Gas              types.ComplexIntResponse `json:"gas,omitempty"`

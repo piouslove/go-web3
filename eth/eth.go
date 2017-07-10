@@ -89,7 +89,7 @@ func (eth *Eth) IsSyncing() (*dto.SyncingResponse, error) {
 // 		upper bound. As a result the returned estimate might not be enough to executed the call/transaction when the amount of gas is higher than the pending block gas limit.
 // Returns:
 //    - QUANTITY - the amount of gas used.
-func (eth *Eth) EstimateGas(from types.Address, to types.Address, value types.ComplexIntParameter, hexData types.ComplexString) (int64, error) {
+func (eth *Eth) EstimateGas(from string, to string, value types.ComplexIntParameter, hexData types.ComplexString) (int64, error) {
 
 	params := make([]dto.TransactionParameters, 1)
 
@@ -117,7 +117,7 @@ func (eth *Eth) EstimateGas(from types.Address, to types.Address, value types.Co
 //	  - QUANTITY|TAG - integer block number, or the string "latest", "earliest" or "pending", see the default block parameter: https://github.com/ethereum/wiki/wiki/JSON-RPC#the-default-block-parameter
 // Returns:
 // 	  - QUANTITY - integer of the current balance in wei.
-func (eth *Eth) GetBalance(address types.Address, blockNumber string) (int64, error) {
+func (eth *Eth) GetBalance(address string, blockNumber string) (int64, error) {
 
 	params := make([]string, 2)
 	params[0] = string(address)
@@ -195,7 +195,7 @@ func (eth *Eth) GetTransactionByHash(hash string) (*dto.TransactionResponse, err
 //    - none
 // Returns:
 //    - Array of DATA, 20 Bytes - addresses owned by the client.
-func (eth *Eth) ListAccounts() ([]types.Address, error) {
+func (eth *Eth) ListAccounts() ([]string, error) {
 
 	pointer := &dto.RequestResult{}
 
@@ -205,7 +205,7 @@ func (eth *Eth) ListAccounts() ([]types.Address, error) {
 		return nil, err
 	}
 
-	return pointer.ToAddressArray()
+	return pointer.ToStringArray()
 
 }
 
@@ -223,7 +223,7 @@ func (eth *Eth) ListAccounts() ([]types.Address, error) {
 // Returns:
 //	  - DATA, 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
 // Use eth_getTransactionReceipt to get the contract address, after the transaction was mined, when you created a contract.
-func (eth *Eth) SendTransaction(from types.Address, to types.Address, value types.ComplexIntParameter, hexData types.ComplexString) (types.Hash, error) {
+func (eth *Eth) SendTransaction(from string, to string, value types.ComplexIntParameter, hexData types.ComplexString) (string, error) {
 
 	params := make([]dto.TransactionParameters, 1)
 
@@ -242,6 +242,6 @@ func (eth *Eth) SendTransaction(from types.Address, to types.Address, value type
 
 	response, err := pointer.ToString()
 
-	return types.Hash(response), err
+	return response, err
 
 }
